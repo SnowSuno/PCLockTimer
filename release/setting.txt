@@ -1,0 +1,2 @@
+30
+# sets the lock file with this text file(no initial time set gui yet)
