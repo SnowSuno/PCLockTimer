@@ -19,7 +19,7 @@ def create():
         Path=os.path.join(winshell.startup(), 'temp.lnk'),
         Target=path,
         Icon=(path, 0),
-        Arguments='1622900129.8488095',
+        Arguments='1622916865.7787423',
         Description="Temp startup"
     )
 
@@ -32,4 +32,5 @@ def delete():
 
 
 if __name__ == '__main__':
-    print(winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments == '')
+    create()
+    # print(winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments == '')

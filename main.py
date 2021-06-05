@@ -115,7 +115,7 @@ def main():
                 lock.delete_startup()
 
         with open('setting.txt', 'r') as f:
-            lock_interval = int(f.readline().strip())
+            lock_interval = float(f.readline().strip())
 
         lock.set_timer(interval=lock_interval)
 
