@@ -16,7 +16,7 @@ def create():
     path = r'C:\Python projects\Computer_Lock\dist/main.exe'
 
     winshell.CreateShortcut(
-        Path=os.path.join(r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp', 'temp.lnk'),
+        Path=os.path.join(winshell.startup(), 'temp.lnk'),
         Target=path,
         Icon=(path, 0),
         Arguments='1622900129.8488095',
@@ -32,4 +32,4 @@ def delete():
 
 
 if __name__ == '__main__':
-    delete()
+    print(winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments == '')

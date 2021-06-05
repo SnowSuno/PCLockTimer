@@ -96,8 +96,7 @@ class Lock(tk.Tk):
 
 
 
-if __name__ == '__main__':
-    # sec = int(input('Block time(secs) : '))
+def main():
     lock = Lock()
 
     if len(sys.argv) > 1:
@@ -105,9 +104,23 @@ if __name__ == '__main__':
         lock.set_timer(end_timestamp=timestamp)
 
     else:
-        with open('setting.txt', 'r') as f:
-            interval = int(f.readline().strip())
+        temp = winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments
+        if temp != '':
+            timestamp = int(temp)
+            if datetime.now() < datetime.fromtimestamp(timestamp):
+                lock.quit()
+                return
 
-        lock.set_timer(interval=interval)
+            else:
+                lock.delete_startup()
+
+        with open('setting.txt', 'r') as f:
+            lock_interval = int(f.readline().strip())
+
+        lock.set_timer(interval=lock_interval)
 
     lock.start()
+
+
+if __name__ == '__main__':
+    main()
