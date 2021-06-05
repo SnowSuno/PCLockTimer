@@ -7,11 +7,11 @@ def is_admin():
         return False
 
 if is_admin():
-    ok = windll.user32.BlockInput(True)  # enable block
+    ok = windll.user32.BlockInput(True)  # enable _block
 
     # or
 
-    ok = windll.user32.BlockInput(False)  # disable block
+    ok = windll.user32.BlockInput(False)  # disable _block
 else:
     # Re-run the program with admin rights
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)

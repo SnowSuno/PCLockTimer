@@ -1,82 +1,68 @@
+from datetime import datetime, timedelta
 import tkinter as tk
-import tkinter.font as tkFont
+from tkinter.font import Font
 import time
-import _thread
 import keyboard as kb
 import pyvda
 
+class Lock(tk.Tk):
+    def __init__(self, end_timestamp=time.time()):
+        super(Lock, self).__init__()
 
-lock = tk.Tk()
+        self.end_time = datetime.fromtimestamp(end_timestamp)
 
+        self.attributes('-fullscreen', True)
+        self.wm_attributes('-topmost', 1)
+        self.title('Lock')
+        self.configure(bg='black')
 
-class Timer:
-    def __init__(self, time):
-        self.time = time
+        timer_font = Font(family='Arial', size=200, weight='bold')
+        self.timer = tk.Label(self, text='', font=timer_font, bg='black', fg='white')
+        self.timer.grid(column=0, row=0)
 
-    def __str__(self):
-        sec = self.time
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
 
-        hour = sec // 3600
-        sec %= 3600
-        min = sec // 60
-        sec %= 60
+    def set_timer(self, interval):
+        self.end_time = datetime.now() + timedelta(seconds=interval)
 
-        H = str(hour).zfill(2)
-        M = str(min).zfill(2)
-        S = str(sec).zfill(2)
+    def timestamp(self):
+        return time.mktime(self.end_time.timetuple())
 
-        return H + ':' + M + ':' + S
+    def _update(self):
+        seconds_left = (self.end_time - datetime.now()).total_seconds()
+        if seconds_left <= 0:
+            self.quit()
 
-    def update(self):
-        if self.time > 0:
-            self.time -= 1
+        hours, remainder = divmod(seconds_left, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        time_str = '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
 
+        self.timer['text'] = time_str
+        self.after(10, self._update)
 
-def time_update(t_init):
-    tmr = Timer(t_init)
-    while True:
-        clock['text'] = tmr
-        tmr.update()
-        time.sleep(1)
+    def _block(self):
+        for key in kb.all_modifiers:
+            kb.block_key(key)
 
-        if tmr.time == 0:
-            lock.quit()
+        pyvda.AppView.current().pin()
+        self.overrideredirect(True)
+        self.protocol('WM_DELETE_WINDOW', lambda: None)
 
+    @staticmethod
+    def unblock():
+        kb.unhook_all()
 
-# def desktop_fix():
-#     current_desktop = pyvda.GetCurrentDesktopNumber()
-#     while True:
-#         kb.send('esc')
-#         if current_desktop != pyvda.GetCurrentDesktopNumber():
-#             pyvda.GoToDesktopNumber(current_desktop)
+    def run(self):
+        self.after(0, self._update)
+        self.after(1, self._block)
 
-
-lock.attributes('-fullscreen', True)
-lock.wm_attributes('-topmost', 1)
-lock.title('LOCK')
-lock.configure(bg='black')
-
-clock_font = tkFont.Font(family='Arial', size=200, weight='bold')
-clock = tk.Label(lock, text='00:00', font=clock_font, bg='black', fg='white')
-
-clock.grid(column=0, row=0)
-
-lock.columnconfigure(0, weight=1)
-lock.rowconfigure(0, weight=1)
+        self.mainloop()
+        self.unblock()
 
 
-for key in kb.all_modifiers:
-    kb.block_key(key)
-
-
-_thread.start_new_thread(time_update, (10,))
-# _thread.start_new_thread(desktop_fix, ())
-
-
-def pin():
-    pyvda.AppView.current().pin()
-
-
-lock.after(1, pin)
-lock.mainloop()
+if __name__ == '__main__':
+    lock = Lock()
+    lock.set_timer(10)
+    lock.run()
 
