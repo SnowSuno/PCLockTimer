@@ -56,6 +56,8 @@ class Lock(tk.Tk):
 
 
     def _update(self):
+        kb.hook(lambda *args: False, suppress=True)
+
         seconds_left = (self.end_time - datetime.now()).total_seconds()
         if seconds_left <= 0:
             self.end()
@@ -65,12 +67,9 @@ class Lock(tk.Tk):
         time_str = '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
 
         self.timer['text'] = time_str
-        self.after(10, self._update)
+        self.after(100, self._update)
 
     def _block(self):
-        for key in kb.all_modifiers:
-            kb.block_key(key)
-
         pyvda.AppView.current().pin()
         self.overrideredirect(True)
         self.protocol('WM_DELETE_WINDOW', lambda: None)
