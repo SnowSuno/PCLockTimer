@@ -7,16 +7,29 @@ import os
 
 # print(winshell.startup())
 
-path = os.path.join(
-    os.path.dirname(sys.executable),
-    os.path.basename(sys.executable)
-)
+# path = os.path.join(
+#     os.path.dirname(sys.executable),
+#     os.path.basename(sys.executable)
+# )
 
-winshell.CreateShortcut(
-    Path=os.path.join(winshell.startup(), 'temp.lnk'),
-    Target=path,
-    Icon=(path, 0),
-    Description="Temp startup"
-)
+def create():
+    path = r'C:\Python projects\Computer_Lock\dist/main.exe'
+
+    winshell.CreateShortcut(
+        Path=os.path.join(r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp', 'temp.lnk'),
+        Target=path,
+        Icon=(path, 0),
+        Arguments='1622900129.8488095',
+        Description="Temp startup"
+    )
 
 
+def delete():
+    path = os.path.join(winshell.startup(), 'temp.lnk')
+
+    if os.path.isfile(path):
+        os.remove(path)
+
+
+if __name__ == '__main__':
+    delete()

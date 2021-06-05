@@ -30,11 +30,13 @@ def value_check(self):
 def value_error(self):
     label.config(text=str(self) + "를 입력하셨습니다.\n올바른 값을 입력하세요.")
 
+
 validate_command = (root.register(value_check), '%P')
 invalid_command = (root.register(value_error), '%P')
 
 hour_spinbox = tk.Spinbox(root, font=root_font, width=5, from_=0, to=24, validate='all')
-min_spinbox = tk.Spinbox(root, font=root_font, width=5, from_=0, to=59, validate='all', validatecommand=validate_command, invalidcommand=invalid_command)
+min_spinbox = tk.Spinbox(root, font=root_font, width=5, from_=0, to=59, validate='all',
+                         validatecommand=validate_command, invalidcommand=invalid_command)
 
 
 
