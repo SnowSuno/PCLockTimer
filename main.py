@@ -106,7 +106,7 @@ def main():
     else:
         temp = winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments
         if temp != '':
-            timestamp = int(temp)
+            timestamp = float(temp)
             if datetime.now() < datetime.fromtimestamp(timestamp):
                 lock.quit()
                 return
@@ -115,7 +115,7 @@ def main():
                 lock.delete_startup()
 
         with open('setting.txt', 'r') as f:
-            lock_interval = float(f.readline().strip())
+            lock_interval = int(f.readline().strip())
 
         lock.set_timer(interval=lock_interval)
 
