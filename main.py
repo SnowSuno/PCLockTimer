@@ -23,7 +23,8 @@ class Lock(tk.Tk):
         self.title('Lock')
         self.configure(bg='black')
 
-        timer_font = Font(family='Consolas', size=200, weight='normal')
+        font_size = self.winfo_screenwidth() // 10
+        timer_font = Font(family='Consolas', size=font_size, weight='normal')
         self.timer = tk.Label(self, text='', font=timer_font, bg='black', fg='white')
         self.timer.grid(column=0, row=0)
 
@@ -84,8 +85,6 @@ class Lock(tk.Tk):
                     time.sleep(0.001)
                 else:
                     break
-
-            print('pinned')
 
             root.overrideredirect(True)
             root.protocol('WM_DELETE_WINDOW', lambda: None)
