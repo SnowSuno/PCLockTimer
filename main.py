@@ -23,7 +23,7 @@ class Lock(tk.Tk):
         self.title('Lock')
         self.configure(bg='black')
 
-        timer_font = Font(family='Arial', size=200, weight='bold')
+        timer_font = Font(family='Consolas', size=200, weight='normal')
         self.timer = tk.Label(self, text='', font=timer_font, bg='black', fg='white')
         self.timer.grid(column=0, row=0)
 
@@ -76,8 +76,14 @@ class Lock(tk.Tk):
         def _block_thread(root):
             pythoncom.CoInitialize()
 
-            hwnd = int(root.frame(), 16)
-            pyvda.AppView(hwnd=hwnd).pin()
+            while True:
+                try:
+                    hwnd = int(root.frame(), 16)
+                    pyvda.AppView(hwnd=hwnd).pin()
+                except _ctypes.COMError:
+                    time.sleep(0.001)
+                else:
+                    break
 
             print('pinned')
 
@@ -85,22 +91,6 @@ class Lock(tk.Tk):
             root.protocol('WM_DELETE_WINDOW', lambda: None)
 
         _thread.start_new_thread(_block_thread, (self,))
-
-        # def _block_thread(root):
-        #     while True:
-        #         try:
-        #             hwnd = int(root.frame(), 16)
-        #             pyvda.AppView(hwnd=hwnd).pin()
-        #         except OSError:
-        #             time.sleep(0.001)
-        #         else:
-        #             break
-        #     print('pinned')
-        #
-        #     self.overrideredirect(True)
-        #     self.protocol('WM_DELETE_WINDOW', lambda: None)
-        #
-        # _thread.start_new_thread(_block_thread, (self,))
 
 
     @staticmethod
