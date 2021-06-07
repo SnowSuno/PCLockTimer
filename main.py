@@ -5,6 +5,9 @@ import time
 import keyboard as kb
 import pyvda
 import sys
+import _ctypes
+import _thread
+import pythoncom
 
 import winshell
 import os
@@ -15,8 +18,8 @@ class Lock(tk.Tk):
 
         self.end_time = None
 
-        self.attributes('-fullscreen', True)
-        self.wm_attributes('-topmost', 1)
+        self.wm_attributes('-fullscreen', True)
+        self.wm_attributes('-topmost', True)
         self.title('Lock')
         self.configure(bg='black')
 
@@ -70,9 +73,35 @@ class Lock(tk.Tk):
         self.after(100, self._update)
 
     def _block(self):
-        pyvda.AppView.current().pin()
-        self.overrideredirect(True)
-        self.protocol('WM_DELETE_WINDOW', lambda: None)
+        def _block_thread(root):
+            pythoncom.CoInitialize()
+
+            hwnd = int(root.frame(), 16)
+            pyvda.AppView(hwnd=hwnd).pin()
+
+            print('pinned')
+
+            root.overrideredirect(True)
+            root.protocol('WM_DELETE_WINDOW', lambda: None)
+
+        _thread.start_new_thread(_block_thread, (self,))
+
+        # def _block_thread(root):
+        #     while True:
+        #         try:
+        #             hwnd = int(root.frame(), 16)
+        #             pyvda.AppView(hwnd=hwnd).pin()
+        #         except OSError:
+        #             time.sleep(0.001)
+        #         else:
+        #             break
+        #     print('pinned')
+        #
+        #     self.overrideredirect(True)
+        #     self.protocol('WM_DELETE_WINDOW', lambda: None)
+        #
+        # _thread.start_new_thread(_block_thread, (self,))
+
 
     @staticmethod
     def _unblock():
@@ -82,7 +111,7 @@ class Lock(tk.Tk):
         self.create_startup()
 
         self.after(0, self._update)
-        self.after(1, self._block)
+        self.after(0, self._block)
 
         self.mainloop()
 
