@@ -9,8 +9,8 @@ import _ctypes
 import _thread
 import pythoncom
 
-import winshell
-import os
+from src import startup
+
 
 class Lock(tk.Tk):
     def __init__(self):
@@ -41,22 +41,6 @@ class Lock(tk.Tk):
     def timestamp(self):
         return str(time.mktime(self.end_time.timetuple()))
 
-
-    def create_startup(self):
-        winshell.CreateShortcut(
-            Path=os.path.join(winshell.startup(), 'temp.lnk'),
-            Target=sys.argv[0],
-            Icon=(sys.argv[0], 0),
-            Arguments=self.timestamp(),
-            Description="Temp startup"
-        )
-
-    @staticmethod
-    def delete_startup():
-        path = os.path.join(winshell.startup(), 'temp.lnk')
-
-        if os.path.isfile(path):
-            os.remove(path)
 
 
     def _update(self):
@@ -97,7 +81,7 @@ class Lock(tk.Tk):
         kb.unhook_all()
 
     def start(self):
-        self.create_startup()
+        startup.create(self.timestamp())
 
         self.after(0, self._update)
         self.after(0, self._block)
@@ -107,10 +91,9 @@ class Lock(tk.Tk):
 
     def end(self):
         self._unblock()
-        self.delete_startup()
+        startup.delete()
 
         self.quit()
-
 
 
 def main():
@@ -121,15 +104,13 @@ def main():
         lock.set_timer(end_timestamp=timestamp)
 
     else:
-        temp = winshell.shortcut(os.path.join(winshell.startup(), 'temp.lnk')).arguments
-        if temp != '':
-            timestamp = float(temp)
+        timestamp = startup.find()
+        if timestamp:
             if datetime.now() < datetime.fromtimestamp(timestamp):
                 lock.quit()
                 return
-
             else:
-                lock.delete_startup()
+                startup.delete()
 
         with open('setting.txt', 'r') as f:
             lock_interval = int(f.readline().strip())
