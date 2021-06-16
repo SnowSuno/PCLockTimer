@@ -34,7 +34,7 @@ class Lock(tk.Tk):
 
 
         self.timer = tk.Frame(self)
-        self.timer.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        self.timer.place(relx=0.5, rely=0.43, anchor=tk.CENTER)
 
         self.hour = self.TimeSetter(self, 24)
         self.hour.grid(column=0, row=0)
@@ -58,7 +58,7 @@ class Lock(tk.Tk):
         # )
         # self.start_btn = RoundedButton(self, 200, 100, 30, 0, 'white', 'black')
         self.start_btn = self.StartButton(self)
-        self.start_btn.place(relx=0.5, rely=0.79, anchor=tk.CENTER)
+        self.start_btn.place(relx=0.5, rely=0.73, anchor=tk.CENTER)
 
         self.quit_btn = self.QuitButton(self)
         self.quit_btn.place(relx=1, rely=0, anchor=tk.NE)
@@ -160,7 +160,7 @@ class Lock(tk.Tk):
 
     class StartButton(tk.Canvas):
         def __init__(self, root):
-            self.size = root.font_size * 0.8
+            self.size = root.font_size * 0.75
             super().__init__(
                 root,
                 width=self.size, height=self.size,
@@ -192,9 +192,9 @@ class Lock(tk.Tk):
         def __init__(self, root):
             super().__init__(
                 root, text='×',
-                font=Font(family='Consolas', size=int(root.font_size * 0.3), weight='normal'),
+                font=Font(family='Consolas', size=int(root.font_size * 0.25), weight='normal'),
                 bg=root.bg, fg=root.fg, bd=0,
-                padx=root.font_size * 0.15
+                padx=root.font_size * 0.125
             )
 
 
